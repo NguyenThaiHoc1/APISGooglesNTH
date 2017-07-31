@@ -2,6 +2,7 @@
   "name": "demo-tutorial",
   "dependencies": {
     "express": "*",
-    "googleapis": "*"
+    "google-auth-library": "^0.10.0",
+    "googleapis": "^20.1.0"
   }
 }

@@ -9,7 +9,7 @@
   <body ng-app="app" ng-controller="ctrl">
 
   <img src="sign-in-with-google.png" ng-click="login()">
-  
+
   </body>
 
   <script>
@@ -17,34 +17,29 @@
 
     app.controller("ctrl", function($scope, $http, $window) {
 
-      var url;
-      var windowThatWasOpened;
+      var urlgoogleRedirect;
+      var windowOpening;
+      $http.get("/url").then(function (response) {
+        console.log(response);
+        urlgoogleRedirect = response.data;
+      })
 
-      $http.get("url").then(function(response) {
-        url = response.data;
-      });
+      $scope.login = function () {
+        windowOpening = $window.open(urlgoogleRedirect, "Please Sign in with google Api", "width:500px, height:700px");
+      }
 
-      $scope.login = function() {
+      $window.onmessage = function (message) {
+        windowOpening.close();
+        var TokenCode = message.data;
 
-        windowThatWasOpened = $window.open(url, "Please sign in with Google", "width=500px,height:700px");
-        
-      };
+        var u = TokenCode.lastIndexOf("code=");
+        var z = TokenCode.substr(u + 5);
+        var k = z.replace("#", "");
 
-      window.onmessage = function(e) {
-        windowThatWasOpened.close();
-        var urlWithCode = e.data;
-
-        var idx = urlWithCode.lastIndexOf("code=");
-        var code = urlWithCode.substring(idx + 5).replace("#","");
-
-        console.log(code);
-
-        $http.get("tokens?code=" + code).then(function(response) {
+        $http.get("/tokens?code=" + k).then(function(response) {
           console.log(response.data);
         });
-
-      };
-
+      }
 
     });
 
